@@ -24,6 +24,14 @@ app.post('/api/chat', async (req, res) => {
     return res.status(400).json({ error: 'Message is required.' });
   }
 
+  // DEBUG: Check if API key is available
+  console.log('API Key exists:', !!process.env.GEMINI_API_KEY);
+  console.log('API Key length:', process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.length : 0);
+  
+  if (!process.env.GEMINI_API_KEY) {
+    return res.status(500).json({ error: 'DEBUG: No API key found in environment variables' });
+  }
+
   try {
     // Define the AI's sarcastic persona and chat history
     // Sticking to a known working model name to avoid 404 errors on deployment
@@ -54,7 +62,7 @@ app.post('/api/chat', async (req, res) => {
 
   } catch (error) {
     console.error('Error calling Gemini API:', error);
-    res.status(500).json({ error: 'Apologies, my circuits are overheating from your simple questions. Try again later.' });
+    res.status(500).json({ error: `DEBUG: Gemini API Error - ${error.message}` });
   }
 });
 
