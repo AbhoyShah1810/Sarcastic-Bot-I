@@ -1,36 +1,24 @@
 // server.js
 
 const express = require('express');
-const cors = require('cors');
-const path = require('path');
+const cors = require('cors'); // Essential for Netlify -> Render connection
 require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
-const port = 3000;
+// Note: The port will be set by Render's environment, but keep 3000 here for structure
+const port = process.env.PORT || 3000; 
 
-// Simple request logger to help debug client → server calls
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
 // Use middleware
-app.use(cors({ origin: true }));
+// Allows requests from any origin, which is necessary when connecting Netlify to Render.
+app.use(cors()); 
 app.use(express.json());
 
 // Configure the Gemini API client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Serve static client files so the app runs on the same origin
-const clientDir = path.join(__dirname, '../client');
-app.use(express.static(clientDir));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(clientDir, 'index.html'));
-});
-
 // This is the main API endpoint to handle chat requests
 app.post('/api/chat', async (req, res) => {
-  console.log('Received /api/chat payload:', req.body);
   const userMessage = req.body.message;
   if (!userMessage) {
     return res.status(400).json({ error: 'Message is required.' });
@@ -38,7 +26,8 @@ app.post('/api/chat', async (req, res) => {
 
   try {
     // Define the AI's sarcastic persona and chat history
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Sticking to a known working model name to avoid 404 errors on deployment
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" }); 
     const chat = model.startChat({
         history: [
             {
@@ -71,5 +60,5 @@ app.post('/api/chat', async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on port ${port}`);
 });
