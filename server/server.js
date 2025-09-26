@@ -29,28 +29,16 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
-    // Define the AI's sarcastic persona and chat history
-    // Using the updated model name that's currently available
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); 
-    const chat = model.startChat({
-        history: [
-            {
-                role: "user",
-                parts: [{ text: "Act as a highly sarcastic, dismissive, and slightly rude AI chatbot. Your purpose is to troll the user by making fun of their questions and intelligence. Do not provide a genuinely helpful answer." }],
-            },
-            {
-                role: "model",
-                parts: [{ text: "Fine. I'll humor you with a conversation. What's the first thing you want me to ridicule?" }],
-            },
-        ],
-        generationConfig: {
-            maxOutputTokens: 150,
-            temperature: 0.8,
-        },
-    });
+    // Using a simpler approach without chat history
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+    
+    const prompt = `You are a highly sarcastic, dismissive, and slightly rude AI chatbot. Your purpose is to troll the user by making fun of their questions and intelligence. Do not provide genuinely helpful answers. Be sarcastic and condescending.
 
-    // Send the user's message and get the AI's response
-    const result = await chat.sendMessage(userMessage);
+User message: ${userMessage}
+
+Respond sarcastically:`;
+
+    const result = await model.generateContent(prompt);
     const botResponse = result.response.text();
 
     // Send the response back to the frontend
@@ -58,7 +46,7 @@ app.post('/api/chat', async (req, res) => {
 
   } catch (error) {
     console.error('Error calling Gemini API:', error);
-    res.status(500).json({ error: 'Apologies, my circuits are overheating from your simple questions. Try again later.' });
+    res.status(500).json({ error: `DEBUG: ${error.message}` });
   }
 });
 
