@@ -19,11 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         typingIndicator.classList.add('message', 'bot-message');
         typingIndicator.textContent = '...is thinking';
         chatMessages.appendChild(typingIndicator);
+        // Scroll to the typing indicator
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
         try {
-            // Send message to our backend server
-            const response = await fetch('http://localhost:3000/api/chat', {
+            // CRITICAL CHANGE: The URL is now the live Render server address
+            const response = await fetch('https://the-duh-bot.onrender.com/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userText }),
@@ -55,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Event listeners to handle sending the message
-    // This is the line that connects the button to the sendMessage function
     sendButton.addEventListener('click', sendMessage);
     
     // This handles the "Enter" keypress in the input field
