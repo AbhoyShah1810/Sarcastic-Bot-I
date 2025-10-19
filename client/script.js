@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
         try {
-            // CRITICAL CHANGE: The URL is now the live Render server address
-            const response = await fetch('https://the-duh-bot.onrender.com/api/chat', {
+            // LOCAL DEVELOPMENT: Pointing to local server
+            const response = await fetch('http://localhost:3000/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userText }),

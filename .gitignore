@@ -1,0 +1,8 @@
+# Dependency directories
+/node_modules
+
+# Environment variables (security)
+/.env 
+
+# macOS files
+.DS_Store
